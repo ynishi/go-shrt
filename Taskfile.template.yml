@@ -1,0 +1,56 @@
+version: '2'
+
+vars:
+  APP: myapp
+
+tasks:
+  cli:
+    desc: work with cli
+    cmds:
+      - docker-compose run {{.APP}} sh
+  create:
+    desc: create new project
+    cmds:
+      - docker-compose run {{.APP}} init.sh
+  update:
+    desc: update project env
+    cmds:
+      - docker-compose run {{.APP}} update.sh
+  add:
+    desc: add package or project settings
+    cmds:
+      - docker-compose run {{.APP}} add.sh ${TARGET}
+  setup:
+    deps: [clean]
+    desc: setup for develop, install deps, migrate db and so on
+    cmds:
+      - docker-compose build --no-cache
+      - docker-compose run {{.APP}} setup.sh
+  serve:
+    deps: [setup]
+    desc: serve in development
+    cmds:
+      - docker-compose up
+  lint:
+    desc: lint and format codes
+    cmds:
+      - docker-compose run {{.APP}} lint.sh
+  build:
+    deps: [clean]
+    desc: build
+    cmds:
+      - docker-compose run {{.APP}} build.sh
+  test:
+    desc: test
+    cmds:
+      - docker-compose run {{.APP}} test.sh
+  deploy:
+    deps: [build, test]
+    desc: deploy
+    cmds:
+      - docker-compose run {{.APP}} deploy.sh
+  clean:
+    desc: clean
+    cmds:
+      - docker-compose down
+      - docker-compose rm
